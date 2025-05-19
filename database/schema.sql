@@ -1,47 +1,52 @@
--- Active: 1747194761367@@127.0.0.1@3306@pos_system
---Empleados (usuarios que venden)
-CREATE TABLE empleados (
+-- Employees (users who sell)
+CREATE TABLE employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    correo VARCHAR(100) UNIQUE,
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
---Productos
-CREATE TABLE productos (
+-- Products
+CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    precio_venta DECIMAL(10,2) NOT NULL,
-    stock INT DEFAULT 0,
-    fecha_agregado DATETIME DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    sale_price DECIMAL(10, 2) NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
---Entradas de inventario (compras o recargas de stock)
-CREATE TABLE entradas_inventario (
+-- Inventory Entries (stock purchases or restocks)
+CREATE TABLE inventory_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    producto_id INT,
-    cantidad INT,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (producto_id) REFERENCES productos(id)
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
---Ventas generales (una venta puede tener varios productos)
-CREATE TABLE ventas (
+-- Sales (a sale can contain many products)
+CREATE TABLE sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    empleado_id INT,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    total DECIMAL(10,2),
-    FOREIGN KEY (empleado_id) REFERENCES empleados(id)
+    employee_id INT,  -- ✅ Permitir NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    total DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 );
 
---Detalle de cada venta (producto, cantidad, precio)
-CREATE TABLE detalle_venta (
+
+-- Sale Details (line items in a sale)
+CREATE TABLE sale_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    venta_id INT,
-    producto_id INT,
-    cantidad INT,
-    precio_unitario DECIMAL(10,2),
-    FOREIGN KEY (venta_id) REFERENCES ventas(id),
-    FOREIGN KEY (producto_id) REFERENCES productos(id)
+    sale_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (sale_id) REFERENCES sales(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );

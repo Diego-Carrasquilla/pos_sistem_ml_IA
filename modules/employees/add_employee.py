@@ -1,20 +1,18 @@
 from pos_sistem.database.connection import get_connection
 
-
-def update_stock(product_id, quantity):
+def add_employee(name, email, position):
     conn = get_connection()
     if conn:
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                UPDATE products
-                SET stock = stock + %s
-                WHERE id = %s
-            """, (quantity, product_id))
+                INSERT INTO employees (name, email, position)
+                VALUES (%s, %s, %s)
+            """, (name, email, position))
             conn.commit()
-            print("🔁 Stock updated.")
+            print(f"✅ Employee '{name}' registered.")
         except Exception as e:
-            print("❌ Error updating stock:", e)
+            print("❌ Error adding employee:", e)
         finally:
             cursor.close()
             conn.close()
