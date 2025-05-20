@@ -3,6 +3,7 @@ CREATE TABLE employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
+    position ENUM('cashier', 'supervisor') NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -30,8 +30,8 @@ def register_sale(employee_id, items):
 
             for item in items:
                 # Obtener el precio actual
-                cursor.execute("SELECT price FROM products WHERE id = %s", (item['product_id'],))
-                price = cursor.fetchone()['price']
+                cursor.execute("SELECT sale_price FROM products WHERE id = %s", (item['product_id'],))
+                price = cursor.fetchone()['sale_price']
 
                 # Insertar detalle de la venta
                 cursor.execute("""
@@ -39,8 +39,12 @@ def register_sale(employee_id, items):
                     VALUES (%s, %s, %s, %s)
                 """, (sale_id, item['product_id'], item['quantity'], price))
 
-                # Actualizar stock
-                update_stock(item['product_id'], -item['quantity'])
+               # Actualizar stock directamente
+                cursor.execute("""
+                    UPDATE products
+                    SET stock = stock - %s
+                    WHERE id = %s
+                """, (item['quantity'], item['product_id']))
 
             conn.commit()
             print(f"✅ Venta registrada. Total: ${total:.2f}, realizada por empleado ID {employee_id}.")
