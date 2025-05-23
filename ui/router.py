@@ -4,6 +4,8 @@ from pos_sistem.ui.sales_view import SalesView
 from pos_sistem.ui.inventory_view import InventoryView
 from pos_sistem.ui.sales_register_view import SalesRegisterView
 from pos_sistem.ui.register_product_view import RegisterProductView
+from pos_sistem.ui.stats_view import StatsView 
+from pos_sistem.ui.ai_assistant import AssistantAIView  
 
 
 def launch_main_window():
@@ -24,6 +26,11 @@ def launch_main_window():
             view = SalesRegisterView(main_frame, show_view)
         elif name == "register_product":
             view = RegisterProductView(main_frame, show_view)
+        elif name == "ai":
+            view =AssistantAIView(main_frame, show_view)
+
+        elif name == "stats":
+            view = StatsView(main_frame, show_view)
 
         else:
             view = ttk.Label(main_frame, text="Vista no encontrada")
